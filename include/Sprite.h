@@ -1,0 +1,79 @@
+//
+// Created by liad on 10/25/25.
+//
+
+#ifndef GAMEENGINE_SPRITE_H
+#define GAMEENGINE_SPRITE_H
+#include <iostream>
+#include <SDL2/SDL_image.h>
+#include <cstdio> // For FILE operations
+
+class Sprite {
+public:
+    Sprite(const Renderer* renderer, const char* fl) : filename(fl) {
+        image = IMG_Load(fl);
+        if (!image) {
+            std::cerr << "IMG_Load Error: " << IMG_GetError() << "\n";
+        }
+        int width = image->w;
+        int height = image->h;
+        int size = image->w * image->h * image->format->BytesPerPixel;
+        texture = IMG_LoadTexture(renderer->get_renderer(), filename);
+        SDL_QueryTexture(texture, NULL, NULL, &image->w, &image->h);
+        sprite.x = x + alignment_x;
+        sprite.y = y + alignment_y;
+        sprite.w = width;
+        sprite.h = height;
+    }
+
+    ~Sprite() {
+        if(image) SDL_FreeSurface(image);
+        if(texture) SDL_DestroyTexture(texture);
+    }
+
+    [[nodiscard]] int get_width() const {
+        return width;
+    }
+    [[nodiscard]] int get_height() const {
+        return height;
+    }
+    [[nodiscard]] int get_size() const {
+        return size;
+    }
+    const char* get_filename() {
+        return filename;
+    }
+    [[nodiscard]] int get_name() const {
+        return image->w * image->h * image->format->BytesPerPixel;
+    }
+    [[nodiscard]] SDL_Surface* get_image() const {
+        return image;
+    }
+    [[nodiscard]] SDL_Texture* get_texture() const {
+        return texture;
+    }
+    [[nodiscard]] const SDL_Rect* get_sprite() const {
+        return &sprite;
+    }
+    void set_alignment(const int x, const int y) {
+        alignment_x = x;
+        alignment_y = y;
+        sprite.x = x;
+        sprite.y = y;
+    }
+
+private:
+    const char* filename{};
+    SDL_Surface* image;
+    SDL_Texture* texture;
+    SDL_Rect sprite{};
+    int width;
+    int height;
+    int size;
+    int alignment_x = 100;
+    int alignment_y = 100;
+    int x = 0;
+    int y = 0;
+
+};
+#endif //GAMEENGINE_SPRITE_H
