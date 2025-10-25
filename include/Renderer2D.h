@@ -34,7 +34,7 @@ public:
         SDL_RenderDrawLine(renderer, x1,y1, x2,y2);
     }
 
-    void draw_sprite(Sprite sprite, int x, int y) {
+    void draw_sprite(Sprite &sprite, int x, int y) {
         sprite.set_position(x,y);
         SDL_RenderCopy(renderer, sprite.get_texture(), NULL,sprite.get_sprite());
     }

@@ -6,7 +6,7 @@
 #define GAMEENGINE_SPRITE_H
 #include <iostream>
 #include <SDL2/SDL_image.h>
-#include <cstdio> // For FILE operations
+#include <EngineTypes.h>
 
 class Sprite {
 public:
@@ -15,13 +15,13 @@ public:
         if (!image) {
             std::cerr << "IMG_Load Error: " << IMG_GetError() << "\n";
         }
-        int width = image->w;
-        int height = image->h;
-        int size = image->w * image->h * image->format->BytesPerPixel;
+        this->width = image->w;
+        this->height = image->h;
+        this->size = image->w * image->h * image->format->BytesPerPixel;
         texture = IMG_LoadTexture(renderer->get_renderer(), filename);
         SDL_QueryTexture(texture, NULL, NULL, &image->w, &image->h);
-        sprite.x = x + alignment_x;
-        sprite.y = y + alignment_y;
+        sprite.x = static_cast<int>(position.x - alignment.x);
+        sprite.y = static_cast<int>(position.y - alignment.y);
         sprite.w = width;
         sprite.h = height;
     }
@@ -40,12 +40,6 @@ public:
     [[nodiscard]] int get_size() const {
         return size;
     }
-    const char* get_filename() {
-        return filename;
-    }
-    [[nodiscard]] int get_name() const {
-        return image->w * image->h * image->format->BytesPerPixel;
-    }
     [[nodiscard]] SDL_Surface* get_image() const {
         return image;
     }
@@ -55,11 +49,17 @@ public:
     [[nodiscard]] const SDL_Rect* get_sprite() const {
         return &sprite;
     }
-    void set_alignment(const int x, const int y) {
-        alignment_x = x;
-        alignment_y = y;
-        sprite.x = x;
-        sprite.y = y;
+    void set_alignment(const float _x, const float _y) {
+        alignment.x = _x;
+        alignment.y = _y;
+        sprite.x = static_cast<int>(position.x - alignment.x);
+        sprite.y = static_cast<int>(position.y - alignment.y);
+    }
+    void set_position(const float _x, const float _y) {
+        position.x = _x;
+        position.y = _y;
+        sprite.x = static_cast<int>(position.x - alignment.x);
+        sprite.y = static_cast<int>(position.y - alignment.y);
     }
 
 private:
@@ -70,10 +70,7 @@ private:
     int width;
     int height;
     int size;
-    int alignment_x = 100;
-    int alignment_y = 100;
-    int x = 0;
-    int y = 0;
-
+    RGNX2D::Vector2 alignment;
+    RGNX2D::Vector2 position;
 };
 #endif //GAMEENGINE_SPRITE_H

@@ -1,6 +1,7 @@
 #include <WindowManager.h>
 #include <Renderer.h>
 #include <Renderer2D.h>
+#include <Input.h>
 
 #include <iostream>
 #include <SDL2/SDL_image.h>
@@ -27,17 +28,23 @@ int main() {
 
     Sprite test(&renderer, "../assets/example.png");
 
+    test.set_alignment(test.get_width()/2, test.get_height()/2);
+
+    float x = 0;
+
+    SDL_Event event;
+    Input::Input input;
     bool running = true;
     while (running) {
-        SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT)
                 running = false;
         }
 
-        // Clear screen and draw
+        x++;
+
         renderer_2d.clear({255, 128, 255, 255});
-        renderer_2d.draw_sprite(test, 0, 0);
+        renderer_2d.draw_sprite(test, x, 0);
         renderer_2d.present();
 
         SDL_Delay(1000/60);
