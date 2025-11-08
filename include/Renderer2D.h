@@ -35,8 +35,13 @@ public:
     }
 
     void draw_sprite(Sprite &sprite, int x, int y) {
-        sprite.set_position(x,y);
-        SDL_RenderCopy(renderer, sprite.get_texture(), NULL,sprite.get_sprite());
+        sprite.set_position(static_cast<float>(x), static_cast<float>(y));
+        SDL_RenderCopy(renderer, sprite.get_texture(), nullptr, sprite.get_sprite());
+    }
+
+    void draw_sprite(Sprite &sprite, const RGNX2D::Vector2& position) {
+        sprite.set_position(position.x, position.y);
+        SDL_RenderCopy(renderer, sprite.get_texture(), nullptr, sprite.get_sprite());
     }
 
 private:

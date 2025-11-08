@@ -30,6 +30,7 @@ include_directories(
 # Executable
 add_executable(GameEngine
         src/main.cpp
+        src/Engine.cpp
         ${IMGUI_SRC}
 )
 

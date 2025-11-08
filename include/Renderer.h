@@ -13,7 +13,10 @@ public:
         renderer = SDL_CreateRenderer(window->get_window(), index, flags);
     }
     ~Renderer() {
-        SDL_DestroyRenderer(renderer);
+        if (renderer) {
+            SDL_DestroyRenderer(renderer);
+            renderer = nullptr;
+        }
     }
 
     [[nodiscard]] SDL_Renderer *get_renderer() const {
@@ -22,7 +25,7 @@ public:
 
 
 private:
-    SDL_Renderer *renderer;
+    SDL_Renderer *renderer{};
 };
 
 #endif //GAMEENGINE_RENDERER_H
