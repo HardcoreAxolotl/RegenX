@@ -5,21 +5,42 @@
 #ifndef GAMEENGINE_SPRITE_H
 #define GAMEENGINE_SPRITE_H
 #include <iostream>
+#include <stdexcept>
+#include <string>
 #include <SDL2/SDL_image.h>
 #include <EngineTypes.h>
+#include <Renderer.h>
 
 class Sprite {
 public:
     Sprite(const Renderer* renderer, const char* fl) : filename(fl) {
+        if (renderer == nullptr || renderer->get_renderer() == nullptr) {
+            throw std::invalid_argument("Renderer must not be null when creating a sprite");
+        }
+
         image = IMG_Load(fl);
         if (!image) {
-            std::cerr << "IMG_Load Error: " << IMG_GetError() << "\n";
+            throw std::runtime_error(std::string("IMG_Load Error: ") + IMG_GetError());
         }
-        this->width = image->w;
-        this->height = image->h;
-        this->size = image->w * image->h * image->format->BytesPerPixel;
+        width = image->w;
+        height = image->h;
+        size = image->w * image->h * image->format->BytesPerPixel;
+
         texture = IMG_LoadTexture(renderer->get_renderer(), filename);
-        SDL_QueryTexture(texture, NULL, NULL, &image->w, &image->h);
+        if (!texture) {
+            SDL_FreeSurface(image);
+            image = nullptr;
+            throw std::runtime_error(std::string("IMG_LoadTexture Error: ") + IMG_GetError());
+        }
+
+        if (SDL_QueryTexture(texture, nullptr, nullptr, &width, &height) != 0) {
+            SDL_DestroyTexture(texture);
+            texture = nullptr;
+            SDL_FreeSurface(image);
+            image = nullptr;
+            throw std::runtime_error(std::string("SDL_QueryTexture Error: ") + SDL_GetError());
+        }
+
         sprite.x = static_cast<int>(position.x - alignment.x);
         sprite.y = static_cast<int>(position.y - alignment.y);
         sprite.w = width;
@@ -27,8 +48,14 @@ public:
     }
 
     ~Sprite() {
-        if(image) SDL_FreeSurface(image);
-        if(texture) SDL_DestroyTexture(texture);
+        if (image) {
+            SDL_FreeSurface(image);
+            image = nullptr;
+        }
+        if (texture) {
+            SDL_DestroyTexture(texture);
+            texture = nullptr;
+        }
     }
 
     [[nodiscard]] int get_width() const {
@@ -64,13 +91,13 @@ public:
 
 private:
     const char* filename{};
-    SDL_Surface* image;
-    SDL_Texture* texture;
+    SDL_Surface* image{nullptr};
+    SDL_Texture* texture{nullptr};
     SDL_Rect sprite{};
-    int width;
-    int height;
-    int size;
-    RGNX2D::Vector2 alignment;
-    RGNX2D::Vector2 position;
+    int width{0};
+    int height{0};
+    int size{0};
+    RGNX2D::Vector2 alignment{};
+    RGNX2D::Vector2 position{};
 };
 #endif //GAMEENGINE_SPRITE_H

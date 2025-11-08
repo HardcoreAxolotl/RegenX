@@ -10,7 +10,7 @@ class Window {
 public:
     // constructor
     Window(const char* title, int width, int height, int flags = 0)
-        : title(title), width(width), height(height), flags(flags)
+        : title(title), width(width), height(height), flags(static_cast<Uint32>(flags))
     {
         win = SDL_CreateWindow(
             title,
@@ -18,7 +18,7 @@ public:
             SDL_WINDOWPOS_CENTERED,
             width,
             height,
-            flags
+            this->flags
         );
     }
 
@@ -26,6 +26,7 @@ public:
     ~Window() {
         if (win && SDL_WasInit(SDL_INIT_VIDEO)) {
             SDL_DestroyWindow(win);
+            win = nullptr;
         }
     }
 
@@ -41,6 +42,9 @@ public:
 
     // fullscreen
     void set_fullscreen(bool fullscreen) {
+        if (!win) {
+            return;
+        }
         if (fullscreen) {
             SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
             flags |= SDL_WINDOW_FULLSCREEN;
@@ -56,6 +60,9 @@ public:
 
     // resizable
     void set_resizable(bool resizable) {
+        if (!win) {
+            return;
+        }
         if (resizable) {
             SDL_SetWindowResizable(win, SDL_TRUE);
             flags |= SDL_WINDOW_RESIZABLE;
@@ -71,11 +78,13 @@ public:
 
     // surface operations
     void update() {
-        SDL_UpdateWindowSurface(win);
+        if (win) {
+            SDL_UpdateWindowSurface(win);
+        }
     }
 
     SDL_Surface* get_surface() {
-        return SDL_GetWindowSurface(win);
+        return win ? SDL_GetWindowSurface(win) : nullptr;
     }
 
 private:
@@ -83,7 +92,7 @@ private:
     const char* title;
     int width;
     int height;
-    Uint32 flags;
+    Uint32 flags{0};
 };
 
 

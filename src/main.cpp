@@ -1,56 +1,59 @@
-#include <WindowManager.h>
-#include <Renderer.h>
-#include <Renderer2D.h>
-#include <Input.h>
-
 #include <iostream>
+#include <stdexcept>
+
+#include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include <EditorInterface.h>
+#include <Engine.h>
+#include <Sprite.h>
+
 int main() {
-    // Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
+    try {
+        Engine::Config config;
+        config.window_title = "RegenX Demo";
+        config.window_width = 1280;
+        config.window_height = 720;
+        config.clear_color = {30, 30, 36, 255};
+        config.target_fps = 60;
+
+        Engine engine(config);
+        EditorInterface editor(engine.window(), engine.renderer());
+
+        Sprite sprite(&engine.renderer(), "../assets/example.png");
+        sprite.set_alignment(static_cast<float>(sprite.get_width()) / 2.0f,
+                             static_cast<float>(sprite.get_height()) / 2.0f);
+
+        float sprite_position_x = static_cast<float>(config.window_width) / 2.0f;
+        const float sprite_speed = 120.0f;
+        const float sprite_y = static_cast<float>(config.window_height) / 2.0f;
+
+        engine.run(
+            [&](float delta_time) {
+                sprite_position_x += sprite_speed * delta_time;
+                if (sprite_position_x > static_cast<float>(config.window_width)) {
+                    sprite_position_x = 0.0f;
+                }
+            },
+            [&](Renderer2D& renderer2d, float) {
+                editor.begin_frame();
+                editor.draw();
+
+                renderer2d.draw_sprite(sprite, static_cast<int>(sprite_position_x), static_cast<int>(sprite_y));
+
+                editor.render();
+            },
+            [&](const SDL_Event& event) {
+                editor.process_event(event);
+                if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE) {
+                    engine.stop();
+                }
+            }
+        );
+    } catch (const std::exception& ex) {
+        std::cerr << "Fatal error: " << ex.what() << std::endl;
         return -1;
     }
-    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-        std::cerr << "IMG_Init Error: " << IMG_GetError() << std::endl;
-        return -1;
-    }
 
-    Window window("Test", 1280, 720);
-    Renderer renderer(&window, -1, SDL_RENDERER_ACCELERATED);
-    if (!renderer.get_renderer()) {
-        std::cerr << "Renderer creation failed!" << std::endl;
-        return -1;
-    }
-
-    Renderer2D renderer_2d(renderer);
-
-    Sprite test(&renderer, "../assets/example.png");
-
-    test.set_alignment(test.get_width()/2, test.get_height()/2);
-
-    float x = 0;
-
-    SDL_Event event;
-    Input::Input input;
-    bool running = true;
-    while (running) {
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT)
-                running = false;
-        }
-
-        x++;
-
-        renderer_2d.clear({255, 128, 255, 255});
-        renderer_2d.draw_sprite(test, x, 0);
-        renderer_2d.present();
-
-        SDL_Delay(1000/60);
-    }
-
-    // Cleanup
-    SDL_Quit();
     return 0;
 }
