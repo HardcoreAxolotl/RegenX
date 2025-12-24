@@ -1,38 +1,45 @@
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <filesystem>
-#include "RegenX/RegenXIO.h"
+extern "C" {
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+}
 
-using namespace std;
+#include <iostream>
+
+int l_engine_log(lua_State* L) {
+    const char* msg = luaL_checkstring(L, 1);
+    std::cout << "[Lua] " << msg << std::endl;
+    return 0;
+}
+
+int l_engine_add(lua_State* L) {
+    int a = luaL_checkinteger(L, 1);
+    int b = luaL_checkinteger(L, 2);
+    lua_pushinteger(L, a + b);
+    return 1;
+}
 
 int main() {
-    const string content = R"(=== RegenXIO TEXT OUTPUT TEST ===
+    std::string script = R"(Engine.log("Hello")
+print(Engine.add(2, 3)))";
 
-If you are reading this file, ALL of the following are working:
+    lua_State* L = luaL_newstate();
+    luaL_openlibs(L);
 
-1. File creation
-2. File write access
-3. Text encoding (ASCII)
-4. Line breaks (\n)
-5. File close / flush
+    static const luaL_Reg engine_funcs[] = {
+        {"log", l_engine_log},
+        {"add", l_engine_add},
+        {nullptr, nullptr}
+    };
 
-Subsystem : RegenXIO
-Operation : file_create + write
-Result    : SUCCESS
+    luaL_newlib(L, engine_funcs);
+    lua_setglobal(L, "Engine");
 
-This file was generated intentionally.
-It is NOT game data.
+    if (luaL_dostring(L, script.c_str()) != LUA_OK) {
+        std::cerr << lua_tostring(L, -1) << std::endl;
+        lua_pop(L, 1);
+    }
 
-End of test.
-)";
-    file_create("test.txt", content);
-    cout << file_read("test.txt") << endl;
-    cout << endl << endl << endl;
-    file_write("test.txt", "Hello, World!\nGoodbye, World");
-    cout << file_read("test.txt") << endl;
-    cout << endl << endl << endl;
-    cout << file_read_line("test.txt", 0) << endl;
-    cout << file_read_line("test.txt", 1) << endl;
+    lua_close(L);
     return 0;
 }

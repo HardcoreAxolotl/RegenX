@@ -7,7 +7,9 @@ find_package(Lua REQUIRED)
 
 add_executable(RegenX src/main.cpp
         src/RegenX/RegenXIO.cpp
-        src/RegenX/RegenXIO.h)
+        src/RegenX/RegenXIO.h
+        src/RegenX/scripting/RegenXLua.cpp
+        src/RegenX/scripting/RegenXLua.h)
 
 target_include_directories(RegenX PRIVATE
         ${LUA_INCLUDE_DIR}
