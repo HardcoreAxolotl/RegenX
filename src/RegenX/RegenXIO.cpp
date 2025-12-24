@@ -23,14 +23,14 @@ void file_delete(const std::string& path) {
     }
 }
 
-void file_create(const std::string& path, const std::string& content = "") {
+void file_create(const std::string& path, const std::string& content) {
     if (!filesystem::exists(path)) {
         std::ofstream file(path, std::ios::__noreplace);
         if (!file.is_open()) {
             std::cerr << "Error: Could not open " << path << std::endl;
             return;
         }
-        file << content;
+        if (!content.empty()) file << content;
         file.close();
     }
     else {
@@ -73,14 +73,27 @@ std::string file_read(const std::string& file_path) {
 }
 
 void file_overwrite(const std::string& file_path, const std::string& content) {
+    if (content.empty()) {
+        std::cerr << "Refusing to overwrite with empty content" << std::endl;
+        return;
+    }
+
     std::ofstream file(file_path);
+    if (!file) {
+        std::cerr << "Can't overwrite file: " << file_path << std::endl;
+        return;
+    }
+
     file << content;
-    file.close();
 }
 
 void file_write(const std::string& file_path, const std::string& content) {
     std::ofstream file(file_path, std::ios::app);
     if (file.is_open()) {
+        if (content.empty()) {
+            std::cerr << "Refusing to write empty content" << std::endl;
+            return;
+        }
         file << content;
     } else {
         std::cerr << "Error: Could not open " << file_path << std::endl;
