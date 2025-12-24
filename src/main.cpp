@@ -1,4 +1,3 @@
-
 #include "RegenX/scripting/RegenXLua.h"
 
 int main() {

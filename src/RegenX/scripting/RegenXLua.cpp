@@ -68,7 +68,7 @@ static int l_file_write(lua_State* L) {
     return 1;
 }
 
-// initalize
+// initialize
 void regenx_io(lua_State* L) {
     lua_newtable(L);
 
@@ -92,7 +92,7 @@ void regenx_io(lua_State* L) {
     lua_setglobal(L, "file");
 }
 
-void initalize_lua_funtions() {
+void initialize_lua_funtions() {
     const std::string script = file_read("/home/liad/CLionProjects/RegenX/src/lua-test/io_test.lua");
 
     if (script.empty()) {
