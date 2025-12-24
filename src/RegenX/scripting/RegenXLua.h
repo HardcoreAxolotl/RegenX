@@ -5,4 +5,6 @@
 #ifndef REGENX_REGENXLUA_H
 #define REGENX_REGENXLUA_H
 
+void execute_lua_file();
+
 #endif //REGENX_REGENXLUA_H
