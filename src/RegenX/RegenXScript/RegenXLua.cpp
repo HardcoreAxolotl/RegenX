@@ -4,6 +4,8 @@
 
 #include "RegenXLua.h"
 
+#include <complex>
+
 // Lua MUST come first
 extern "C" {
 #include <lua.h>
@@ -67,6 +69,25 @@ static int l_file_write(lua_State* L) {
     lua_pushboolean(L, file_write(file_path, content));
     return 1;
 }
+// RegeXLog port
+#include "../RegenXLog.h"
+int l_log(lua_State* L) {
+    const char *message = lua_tostring(L, -1);
+    log(message);
+    return 1;
+}
+
+int l_warning(lua_State* L) {
+    const char *message = lua_tostring(L, -1);
+    warning(message);
+    return 1;
+}
+
+int l_error(lua_State* L) {
+    const char *message = lua_tostring(L, -1);
+    error(message);
+    return 1;
+}
 
 // initialize
 void regenx_io(lua_State* L) {
@@ -92,8 +113,28 @@ void regenx_io(lua_State* L) {
     lua_setglobal(L, "file");
 }
 
+void regenx_log(lua_State* L) {
+    lua_newtable(L);
+
+    static const luaL_Reg file_funcs[] = {
+        {"log",    l_log},
+        {"warning",    l_warning},
+        {"error",    l_error},
+        {nullptr, nullptr}
+    };
+
+    for (const luaL_Reg* f = file_funcs; f->name != nullptr; ++f) {
+        lua_pushcfunction(L, f->func);      // stack: [ table, function ]
+        lua_setfield(L, -2, f->name);       // table[f->name] = function
+    }
+
+    // now set the populated table as global "file"
+    lua_setglobal(L, "log");
+}
+
 void initialize_lua_funtions() {
-    const std::string script = file_read("/home/liad/CLionProjects/RegenX/src/lua-test/io_test.lua");
+    const std::string script =
+        file_read("/home/liad/CLionProjects/RegenX/src/lua-test/log_test.lua");
 
     if (script.empty()) {
         std::cerr << "Lua script failed to load or is empty\n";
@@ -101,9 +142,16 @@ void initialize_lua_funtions() {
     }
 
     lua_State* L = luaL_newstate();
-    luaL_openlibs(L);
-    regenx_io(L);
 
+    // 1. Replace global environment with an empty table
+    lua_newtable(L);
+    lua_rawseti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
+
+    // 2. Register ONLY what you want
+    regenx_io(L);
+    regenx_log(L);
+
+    // 3. Load and execute script
     if (luaL_loadbuffer(L, script.data(), script.size(), "lua-test.lua") != LUA_OK ||
         lua_pcall(L, 0, 0, 0) != LUA_OK) {
 
@@ -115,5 +163,5 @@ void initialize_lua_funtions() {
 }
 
 void execute_lua_file() {
-    initalize_lua_funtions();
+    initialize_lua_funtions();
 }

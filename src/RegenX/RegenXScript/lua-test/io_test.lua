@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 -- =========================================
 -- RegenX IO Test Script (Lua)
 -- Purpose: Validate all file IO operations

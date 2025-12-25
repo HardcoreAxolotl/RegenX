@@ -10,6 +10,8 @@
 #include <lauxlib.h>
 #include <sstream>
 
+#include "RegenXLog.h"
+
 namespace filesystem = std::filesystem;
 
 // C++
@@ -19,10 +21,10 @@ bool file_exists(const std::string& file_path) {
 
 bool file_delete(const std::string& file_path) {
     if (std::remove(file_path.c_str()) == 0) {
-        std::cout << "File successfully deleted: " << file_path << std::endl;
+        log(file_path + " was successfully deleted");
         return true;
     } else {
-        std::cerr << "Error deleting file: " << file_path << std::endl;
+        error("Error deleting file: " + file_path);
         return false;
     }
 }
@@ -31,7 +33,7 @@ bool file_create(const std::string& file_path, const std::string& content) {
     if (!filesystem::exists(file_path)) {
         std::ofstream file(file_path, std::ios::__noreplace);
         if (!file.is_open()) {
-            std::cerr << "Could not open " << file_path << std::endl;
+            error("Could not create " + file_path);
             return false;
         }
         if (!content.empty()) file << content;
@@ -39,7 +41,7 @@ bool file_create(const std::string& file_path, const std::string& content) {
         return true;
     }
     else {
-        std::cerr << "Could not create " << file_path << std::endl;
+        error("Could not create " + file_path);
         return false;
     }
 }
@@ -49,7 +51,7 @@ std::string file_read_line(const std::string& file_path, const int line) {
     std::string text;
     std::ifstream file(file_path);
     if (!file.is_open()) {
-        std::cerr << "Could not open " << file_path << std::endl;
+        error("Error: Could not open " + file_path);
         return ""; // Return an empty string or handle the error as needed
     }
 
@@ -68,7 +70,7 @@ std::string file_read(const std::string& file_path) {
     std::string text;
     std::ifstream file(file_path);
     if (!file.is_open()) {
-        std::cerr << "Error: Could not open " << file_path << std::endl;
+        error("Error: Could not open " + file_path);
         return ""; // Return an empty string or handle the error as needed
     }
 
@@ -80,13 +82,13 @@ std::string file_read(const std::string& file_path) {
 
 bool file_overwrite(const std::string& file_path, const std::string& content) {
     if (content.empty()) {
-        std::cerr << "Refusing to overwrite with empty content" << std::endl;
+        error("Refusing to overwrite with empty content" );
         return false;
     }
 
     std::ofstream file(file_path);
     if (!file) {
-        std::cerr << "Can't overwrite file: " << file_path << std::endl;
+        error("Can't overwrite file" + file_path);
         return false;
     }
 
@@ -99,12 +101,12 @@ bool file_write(const std::string& file_path, const std::string& content) {
     std::ofstream file(file_path, std::ios::app);
     if (file.is_open()) {
         if (content.empty()) {
-            std::cerr << "Refusing to write empty content" << std::endl;
+            error("Refusing to write empty content" );
             return false;
         }
         file << content;
     } else {
-        std::cerr << "Error: Could not open " << file_path << std::endl;
+        error("Error: Could not open " + file_path);
         return false;
     }
     file.close();
