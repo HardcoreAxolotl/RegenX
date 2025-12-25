@@ -2,7 +2,7 @@
 // Created by liad on 24/12/2025.
 //
 
-#include "RegenXLua.h"
+#include "../RegenXLua.h"
 
 #include <complex>
 
@@ -19,7 +19,7 @@ extern "C" {
 
 
 // Lua RegenXIO port
-#include "../RegenXIO.h"
+#include "../../Functions/RegenXIO.h"
 static int l_file_exists(lua_State* L) {
     const char* file_path = luaL_checkstring(L, 1);
     lua_pushboolean(L, file_exists(file_path));

@@ -49,35 +49,22 @@ Work on retro console support will not begin until the engine matures and the co
 The engine is split into multiple modules.  
 Completion percentages reflect **currently implemented functionality**, not planned features.
 
-### Core Engine
+### Planned
 - RegenXCore — 5%
 - RegenXIO — 45%
 - RegenXLog — 20%
 - RegenXMemory — 0%
+- RegenXThread — 0%
 - RegenXPlatform — 0%
-
-### Language Support
+- RegenXInput — 0%
 - RegenXC++ — 0%
 - RegenXLua — 8%
 - RegenXPython — 0%
 - RegenXC# — 0%
-
-### Graphics and Rendering
 - RegenX2D — 0%
-- RegenX3D — 0%
-- RegenXShaders — 0%
-
-### Assets and Data
 - RegenXAssets — 0%
 - RegenXTypes — 0%
-
-### Physics and Math
-- RegenXMath — 0%
-- RegenXCollision — 0%
-
-### Tools
-- RegenXEditor — 0%
-- RegenXBuild — 0%
+- RegenXShapes — 0%
 
 ### Overall Engine Completion
 **RegenX (overall)** — 10%

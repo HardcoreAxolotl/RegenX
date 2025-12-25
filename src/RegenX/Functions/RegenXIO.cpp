@@ -2,7 +2,7 @@
 // Created by liad on 16/12/2025.
 //
 
-#include "RegenXIO.h"
+#include "../RegenXIO.h"
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -10,7 +10,7 @@
 #include <lauxlib.h>
 #include <sstream>
 
-#include "RegenXLog.h"
+#include "../RegenXLog.h"
 
 namespace filesystem = std::filesystem;
 

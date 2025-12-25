@@ -1,0 +1,8 @@
+//
+// Created by liad on 25/12/2025.
+//
+
+#ifndef REGENX_REGENXPLATFORM_H
+#define REGENX_REGENXPLATFORM_H
+
+#endif // REGENX_REGENXPLATFORM_H
