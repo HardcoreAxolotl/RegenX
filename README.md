@@ -87,6 +87,11 @@ See the `LICENSE` file for full details.
 
 RegenX is under active development.
 
-APIs may change.
-Modules may be refactored.
+Nothing in the engine should be considered permanent.
+APIs, module structure, and overall engine design may change as development continues.
+
+The engine is also a learning project.
+As I learn more about game engine design, systems may be redesigned, replaced, or removed.
+
 Expect breaking changes as the engine evolves.
+
