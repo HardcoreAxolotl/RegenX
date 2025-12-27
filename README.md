@@ -50,22 +50,9 @@ The engine is split into multiple modules.
 Completion percentages reflect **currently implemented functionality**, not planned features.
 
 ### Modules
-- RegenXCore 5%
-- RegenXIO 45%
-- RegenXLog 20%
-- RegenXMemory 0%
-- RegenXThread 0%
-- RegenXPlatform 0%
-- RegenXInput 0%
-- RegenXC++ 0%
-- RegenXLua 8%
-- RegenXPython 0%
-- RegenXC# 0%
-- RegenX2D 0%
-- RegenXAssets 0%
-- RegenXTypes 0%
-- RegenXShapes 0%
-
+- RegenXIO 
+- RegenXLog
+- RegenXLua
 ---
 
 ## License and Usage

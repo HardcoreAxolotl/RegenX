@@ -2,5 +2,14 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/third_party/ImGuizmo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/third_party/ImNodeFlow" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/third_party/SLikeNet" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/third_party/bgfx" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/third_party/bimg" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/third_party/bx" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/third_party/entt" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/third_party/imgui" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/third_party/sol2" vcs="Git" />
   </component>
 </project>

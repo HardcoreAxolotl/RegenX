@@ -1,0 +1,17 @@
+# Build outputs
+cmake-build-*/
+build/
+out/
+
+# IDE
+.idea/
+.vscode/
+*.user
+*.suo
+
+# OS
+.DS_Store
+
+# Third-party build artifacts (if you build them in-place)
+third_party/**/build/
+third_party/**/bin/
