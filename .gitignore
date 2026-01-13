@@ -1,0 +1,21 @@
+# Build directories
+/build/
+RegenXBuild/
+cmake-build-*/
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+
+# Binaries
+RegenX
+
+# IDEs
+.idea/
+.vscode/
+
+# OS junk
+.DS_Store
+*.log
