@@ -5,6 +5,7 @@
 
 inline static void CopyIOEvents(ImGuiContext* src, ImGuiContext* dst, ImVec2 origin, float scale)
 {
+    dst->IO.DeltaTime = src->IO.DeltaTime;
     dst->InputEventsQueue = src->InputEventsTrail;
     for (ImGuiInputEvent& e : dst->InputEventsQueue) {
         if (e.Type == ImGuiInputEventType_MousePos) {
@@ -77,7 +78,9 @@ public:
     [[nodiscard]] const ImVec2& origin() const { return m_origin; }
     [[nodiscard]] bool hovered() const { return m_hovered; }
     [[nodiscard]] const ImVec2& scroll() const { return m_scroll; }
+    [[nodiscard]] ImVec2 getScreenDelta() { return m_original_ctx->IO.MouseDelta / scale(); }
     ImGuiContext* getRawContext() { return m_ctx; }
+    void setFontDensity();
 private:
     ContainedContextConfig m_config;
 
@@ -92,7 +95,7 @@ private:
     bool m_hovered = false;
 
     float m_scale = m_config.default_zoom, m_scaleTarget = m_config.default_zoom;
-    ImVec2 m_scroll = {0.f, 0.f}, m_scrollTarget = {0.f, 0.f};
+    ImVec2 m_scroll = {0.f, 0.f};
 };
 
 inline ContainedContext::~ContainedContext()
@@ -100,11 +103,20 @@ inline ContainedContext::~ContainedContext()
     if (m_ctx) ImGui::DestroyContext(m_ctx);
 }
 
+// Call after Begin()
+inline void ContainedContext::setFontDensity()
+{
+#if IMGUI_VERSION_NUM >= 19198
+    ImGui::SetFontRasterizerDensity(roundf(m_scale * 100.0f) / 100.0f); // Round density to two digits.
+#endif
+}
+
 inline void ContainedContext::begin()
 {
     ImGui::PushID(this);
     ImGui::PushStyleColor(ImGuiCol_ChildBg, m_config.color);
     ImGui::BeginChild("view_port", m_config.size, 0, ImGuiWindowFlags_NoMove);
+    setFontDensity();
     ImGui::PopStyleColor();
     m_pos = ImGui::GetWindowPos();
 
@@ -121,6 +133,15 @@ inline void ContainedContext::begin()
 
     ImGui::GetIO().DisplaySize = m_size / m_scale;
     ImGui::GetIO().ConfigInputTrickleEventQueue = false;
+
+    // Copy the ImGuiBackendFlags_RendererHasTextures flag as they need to be matching.
+    // This will also copy the ImGuiBackendFlags_RendererHasVtxOffset flag which will be more optimal in case large draw calls are being made.
+    ImGui::GetIO().ConfigFlags = m_original_ctx->IO.ConfigFlags;
+    ImGui::GetIO().BackendFlags = m_original_ctx->IO.BackendFlags;
+#ifdef IMGUI_HAS_VIEWPORT
+    ImGui::GetIO().ConfigFlags &= ~(ImGuiConfigFlags_ViewportsEnable | ImGuiConfigFlags_DockingEnable);
+#endif
+
     ImGui::NewFrame();
 
     if (!m_config.extra_window_wrapper)
@@ -130,6 +151,7 @@ inline void ContainedContext::begin()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::Begin("viewport_container", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove
                                                 | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+    setFontDensity();
     ImGui::PopStyleVar();
 }
 
@@ -190,9 +212,8 @@ inline void ContainedContext::end()
     if (m_hovered && !m_anyItemActive && ImGui::IsMouseDragging(m_config.scroll_button, 0.f))
     {
         m_scroll += ImGui::GetIO().MouseDelta / m_scale;
-        m_scrollTarget = m_scroll;
     }
-
+    this->m_ctx->IO.MousePos = (ImGui::GetMousePos() - m_origin) / m_scale;
     ImGui::EndChild();
     ImGui::PopID();
 }

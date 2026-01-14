@@ -11,8 +11,8 @@
 #include <algorithm>
 #include <functional>
 #include <unordered_map>
-#include <imgui.h>
 #include "../src/imgui_bezier_math.h"
+#include <imgui.h>
 #include "../src/context_wrapper.h"
 
 //#define ConnectionFilter_None       [](ImFlow::Pin* out, ImFlow::Pin* in){ return true; }
@@ -310,6 +310,34 @@ namespace ImFlow
         template<typename T, typename... Params>
         std::shared_ptr<T> addNode(const ImVec2& pos, Params&&... args);
 
+    private:
+        /**
+         * @brief <BR>Helper struct for creating a node struct from a lambda
+         * @sa addLambdaNode which wraps creating one of these
+         * @tparam L the type of the lambda
+         * @tparam B always BaseNode, tparam because BaseNode is incomplete here
+         */
+        template <typename L, typename B = BaseNode>
+        struct NodeWrapper : public B
+        {
+            L mLambda;
+            NodeWrapper(L&& l): BaseNode(), mLambda(std::forward<L>(l)) {}
+            void draw() { mLambda(this); }
+        };
+
+    public:
+        /**
+         * @brief <BR>Add a node whos operation can be defined within a lambda.
+         * @tparam L the type of the lambda
+         * @param lambda the lambda that defines the nodes operation
+         * @param pos the position at which to place the node
+         */
+        template<typename L>
+        std::shared_ptr<NodeWrapper<L>> addLambdaNode(L&& lambda, const ImVec2& pos)
+        {
+            return addNode<NodeWrapper<L>>(pos, std::forward<L>(lambda));
+        }
+
         /**
          * @brief <BR>Add a node to the grid
          * @tparam T Derived class of <BaseNode> to be added
@@ -386,6 +414,13 @@ namespace ImFlow
          * @return Const reference to editor's grid scroll
          */
         const ImVec2& getScroll() { return m_context.scroll(); }
+        
+        /**
+         * @brief <BR>Get the scale adjusted screen space mouse delta, needed for dragging
+         * 
+         * @return scale adjusted mouse delta.
+         */
+        ImVec2 getScreenSpaceDelta(){return m_context.getScreenDelta(); }
 
         /**
          * @brief <BR>Get editor's list of nodes
@@ -479,7 +514,7 @@ namespace ImFlow
          * @brief <BR>Get recursion blacklist for nodes
          * @return Reference to blacklist
          */
-        std::vector<NodeUID>& get_recursion_blacklist() { return m_nodeRecursionBlacklist; }
+        std::vector<std::string>& get_recursion_blacklist() { return m_pinRecursionBlacklist; }
     private:
         std::string m_name;
         ContainedContext m_context;
@@ -487,7 +522,7 @@ namespace ImFlow
         bool m_singleUseClick = false;
 
         std::unordered_map<NodeUID, std::shared_ptr<BaseNode>> m_nodes;
-        std::vector<NodeUID> m_nodeRecursionBlacklist;
+        std::vector<std::string> m_pinRecursionBlacklist;
         std::vector<std::weak_ptr<Link>> m_links;
 
         std::function<void(Pin* dragged)> m_droppedLinkPopUp;
@@ -782,6 +817,12 @@ namespace ImFlow
         const ImVec2& getSize() { return  m_size; }
 
         /**
+         * @brief <BR>Get node size
+         * @return Const reference to the node's size
+         */
+        const ImVec2& getFullSize() { return m_fullSize; }
+
+        /**
          * @brief <BR>Get node position
          * @return Const reference to the node's position
          */
@@ -858,6 +899,7 @@ namespace ImFlow
         std::string m_title;
         ImVec2 m_pos, m_posTarget;
         ImVec2 m_size;
+        ImVec2 m_fullSize;
         ImNodeFlow* m_inf = nullptr;
         std::shared_ptr<NodeStyle> m_style;
         bool m_selected = false, m_selectedNext = false;
@@ -898,7 +940,7 @@ namespace ImFlow
          * @param style Style of the pin
          */
         explicit Pin(PinUID uid, std::string name, std::shared_ptr<PinStyle> style, PinType kind, BaseNode* parent, ImNodeFlow** inf)
-            :m_uid(uid), m_name(std::move(name)), m_style(std::move(style)), m_type(kind), m_parent(parent), m_inf(inf)
+            :m_uid(uid), m_name(std::move(name)), m_type(kind), m_parent(parent), m_inf(inf), m_style(std::move(style))
             {
                 if(!m_style)
                     m_style = PinStyle::cyan();
@@ -1151,7 +1193,10 @@ namespace ImFlow
         /**
          * @brief <BR>When parent gets deleted, remove the links
          */
-        ~OutPin() override { for (auto &l: m_links) if (!l.expired()) l.lock()->right()->deleteLink(); }
+        ~OutPin() override {
+            std::vector<std::weak_ptr<Link>> links = std::move(m_links);
+            for (auto &l: links) if (!l.expired()) l.lock()->right()->deleteLink();
+        }
 
         /**
          * @brief <BR>Create link between pins

@@ -5,8 +5,8 @@
 #include <RegenXIO.hpp>
 #include <RegenXLog.hpp>
 
-std::string vertexSource   = regenx::file::read("shader.vert");
-std::string fragmentSource = regenx::file::read("shader.frag");
+std::string vertexSource   = regenx::file::read("resource/shaders/shader.vert");
+std::string fragmentSource = regenx::file::read("resource/shaders/shader.frag");
 
 const char* vertexShaderSource   = vertexSource.c_str();
 const char* fragmentShaderSource = fragmentSource.c_str();

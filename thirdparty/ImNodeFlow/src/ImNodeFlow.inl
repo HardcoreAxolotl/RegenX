@@ -172,6 +172,7 @@ namespace ImFlow
             if (p.second->getUid() == h)
             {
                 p.first = 2;
+                static_cast<OutPin<T>*>(m_dynamicOuts.back().second.get())->behaviour(std::move(behaviour));
                 return;
             }
         }
@@ -326,9 +327,10 @@ namespace ImFlow
     template<class T>
     const T &OutPin<T>::val()
     {
-        if (std::find((*m_inf)->get_recursion_blacklist().begin(), (*m_inf)->get_recursion_blacklist().end(), m_parent->getUID()) == (*m_inf)->get_recursion_blacklist().end())
+        std::string s = std::to_string(m_uid) + std::to_string(m_parent->getUID());
+        if (std::find((*m_inf)->get_recursion_blacklist().begin(), (*m_inf)->get_recursion_blacklist().end(), s) == (*m_inf)->get_recursion_blacklist().end())
         {
-            (*m_inf)->get_recursion_blacklist().emplace_back(m_parent->getUID());
+            (*m_inf)->get_recursion_blacklist().emplace_back(s);
             m_val = m_behaviour();
         }
 
