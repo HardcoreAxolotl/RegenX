@@ -26,6 +26,7 @@ endif()
 set(IMGUI_PATH        "${CMAKE_SOURCE_DIR}/thirdparty/imgui")
 set(IMGUI_BACKENDS    "${IMGUI_PATH}/backends")
 set(REGENX_PATH       "${CMAKE_SOURCE_DIR}/RegenX")
+set(INCLUDE_PATH      "${CMAKE_SOURCE_DIR}/include")
 set(SRC_PATH          "${CMAKE_SOURCE_DIR}/src")
 set(IMNODEFLOW_PATH   "${CMAKE_SOURCE_DIR}/thirdparty/ImNodeFlow")
 set(RESOURCE_DIR      "${CMAKE_SOURCE_DIR}/resource")
@@ -35,39 +36,64 @@ set(RESOURCE_DEST     "${CMAKE_BINARY_DIR}/resource")
 # Source Files
 # ===========================================================
 
-# RegenX modules
-file(GLOB_RECURSE REGENX_SOURCES "${REGENX_PATH}/*.cpp")
+# -----------------------------------------------------------
+# Main application
+# -----------------------------------------------------------
+set(MAIN_SOURCES
+        "${SRC_PATH}/main.cpp"
+        "${SRC_PATH}/glad.c"
+)
 
-# ImGui core files
-file(GLOB IMGUI_CORE
+# -----------------------------------------------------------
+# Engine / internal modules
+# -----------------------------------------------------------
+set(REGENX_SOURCES
+        "${REGENX_PATH}/RegenXIO.cpp"
+        "${REGENX_PATH}/RegenXLog.cpp"
+)
+
+set(INCLUDE_SOURCES
+        "${INCLUDE_PATH}/rendering/Shader.cpp"
+        "${INCLUDE_PATH}/rendering/VAO.cpp"
+        "${INCLUDE_PATH}/rendering/VBO.cpp"
+        "${INCLUDE_PATH}/rendering/EBO.cpp"
+)
+# -----------------------------------------------------------
+# ImGui core
+# -----------------------------------------------------------
+set(IMGUI_CORE
         "${IMGUI_PATH}/imgui.cpp"
         "${IMGUI_PATH}/imgui_draw.cpp"
         "${IMGUI_PATH}/imgui_widgets.cpp"
         "${IMGUI_PATH}/imgui_tables.cpp"
 )
 
+# -----------------------------------------------------------
 # ImGui backends
+# -----------------------------------------------------------
 set(IMGUI_BACKEND_SOURCES
         "${IMGUI_BACKENDS}/imgui_impl_sdl2.cpp"
         "${IMGUI_BACKENDS}/imgui_impl_opengl3.cpp"
 )
 
+# -----------------------------------------------------------
 # ImNodeFlow
-file(GLOB_RECURSE IMNODEFLOW_SOURCES "${IMNODEFLOW_PATH}/src/*.cpp")
-
-# Main application sources
-set(MAIN_SOURCES
-        "${SRC_PATH}/main.cpp"
-        "${SRC_PATH}/glad.c"
+# -----------------------------------------------------------
+file(GLOB_RECURSE IMNODEFLOW_SOURCES
+        "${IMNODEFLOW_PATH}/src/*.cpp"
 )
 
+# -----------------------------------------------------------
 # Combine everything
+# -----------------------------------------------------------
 set(ALL_SOURCES
+        ${MAIN_SOURCES}
+        ${REGENX_SOURCES}
+        ${INCLUDE_SOURCES}
+        ${IMNODEFLOW_SOURCES}
         ${IMGUI_CORE}
         ${IMGUI_BACKEND_SOURCES}
-        ${IMNODEFLOW_SOURCES}
-        ${REGENX_SOURCES}
-        ${MAIN_SOURCES}
+        include/stb/stb_image.h
 )
 
 # ===========================================================
