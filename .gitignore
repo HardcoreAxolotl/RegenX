@@ -5,7 +5,7 @@ cmake-build-*/
 
 # CMake generated files
 CMakeFiles/
-CMakeCache.txt
+CMakeCache.stxt
 cmake_install.cmake
 compile_commands.json
 
