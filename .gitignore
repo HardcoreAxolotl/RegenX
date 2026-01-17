@@ -9,9 +9,6 @@ CMakeCache.txt
 cmake_install.cmake
 compile_commands.json
 
-# Binaries
-RegenX
-
 # IDEs
 .idea/
 .vscode/
