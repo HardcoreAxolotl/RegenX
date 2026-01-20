@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)  # safer for CLion
+cmake_minimum_required(VERSION 3.26)
 project(RegenX)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -11,14 +11,8 @@ find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(CURL REQUIRED)
 
-# Boost configuration (header-only handling)
-set(Boost_USE_MULTITHREADED ON)
-find_package(Boost 1.65 REQUIRED)
-if(NOT Boost_FOUND)
-    message(FATAL_ERROR "Boost not found!")
-else()
-    message(STATUS "Using Boost includes: ${Boost_INCLUDE_DIRS}")
-endif()
+find_path(ENET_INCLUDE_DIR enet/enet.h)
+find_library(ENET_LIBRARY enet)
 
 # ===========================================================
 # Paths
@@ -35,18 +29,11 @@ set(RESOURCE_DEST     "${CMAKE_BINARY_DIR}/resource")
 # ===========================================================
 # Source Files
 # ===========================================================
-
-# -----------------------------------------------------------
-# Main application
-# -----------------------------------------------------------
 set(MAIN_SOURCES
         "${SRC_PATH}/main.cpp"
         "${SRC_PATH}/glad.c"
 )
 
-# -----------------------------------------------------------
-# Engine / internal modules
-# -----------------------------------------------------------
 set(REGENX_SOURCES
         "${REGENX_PATH}/RegenXIO.cpp"
         "${REGENX_PATH}/RegenXLog.cpp"
@@ -58,9 +45,7 @@ set(INCLUDE_SOURCES
         "${INCLUDE_PATH}/rendering/VBO.cpp"
         "${INCLUDE_PATH}/rendering/EBO.cpp"
 )
-# -----------------------------------------------------------
-# ImGui core
-# -----------------------------------------------------------
+
 set(IMGUI_CORE
         "${IMGUI_PATH}/imgui.cpp"
         "${IMGUI_PATH}/imgui_draw.cpp"
@@ -68,24 +53,15 @@ set(IMGUI_CORE
         "${IMGUI_PATH}/imgui_tables.cpp"
 )
 
-# -----------------------------------------------------------
-# ImGui backends
-# -----------------------------------------------------------
 set(IMGUI_BACKEND_SOURCES
         "${IMGUI_BACKENDS}/imgui_impl_sdl2.cpp"
         "${IMGUI_BACKENDS}/imgui_impl_opengl3.cpp"
 )
 
-# -----------------------------------------------------------
-# ImNodeFlow
-# -----------------------------------------------------------
 file(GLOB_RECURSE IMNODEFLOW_SOURCES
         "${IMNODEFLOW_PATH}/src/*.cpp"
 )
 
-# -----------------------------------------------------------
-# Combine everything
-# -----------------------------------------------------------
 set(ALL_SOURCES
         ${MAIN_SOURCES}
         ${REGENX_SOURCES}
@@ -109,8 +85,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         ${IMGUI_BACKENDS}
         ${REGENX_PATH}
         ${IMNODEFLOW_PATH}/include
-        ${Boost_INCLUDE_DIRS}
         ${CURL_INCLUDE_DIRS}
+        ${SDL2_INCLUDE_DIRS}
+        ${ENET_INCLUDE_DIRS}
         include
 )
 
@@ -121,6 +98,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         SDL2::SDL2
         OpenGL::GL
         ${CURL_LIBRARIES}
+        ${ENET_LIBRARIES}
 )
 
 # ===========================================================
