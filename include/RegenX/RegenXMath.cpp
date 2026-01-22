@@ -4,8 +4,5 @@
 
 namespace regenx::math
 {
-    namespace vector
-    {
-        
-    }
+
 }

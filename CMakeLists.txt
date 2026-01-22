@@ -1,5 +1,9 @@
-cmake_minimum_required(VERSION 3.26)
-project(RegenX)
+cmake_minimum_required(VERSION 4.0)
+
+# ===========================================================
+# Project
+# ===========================================================
+project(RegenXApp LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -14,39 +18,48 @@ find_package(CURL REQUIRED)
 find_path(ENET_INCLUDE_DIR enet/enet.h)
 find_library(ENET_LIBRARY enet)
 
+# Gainput (installed via cmake install)
+find_path(GAINPUT_INCLUDE_DIR gainput/GainputInputManager.h)
+find_library(GAINPUT_LIBRARY NAMES gainput)
+
 # ===========================================================
 # Paths
 # ===========================================================
-set(IMGUI_PATH        "${CMAKE_SOURCE_DIR}/thirdparty/imgui")
-set(IMGUI_BACKENDS    "${IMGUI_PATH}/backends")
-set(REGENX_PATH       "${CMAKE_SOURCE_DIR}/RegenX")
-set(INCLUDE_PATH      "${CMAKE_SOURCE_DIR}/include")
-set(SRC_PATH          "${CMAKE_SOURCE_DIR}/src")
-set(IMNODEFLOW_PATH   "${CMAKE_SOURCE_DIR}/thirdparty/ImNodeFlow")
-set(RESOURCE_DIR      "${CMAKE_SOURCE_DIR}/resource")
-set(RESOURCE_DEST     "${CMAKE_BINARY_DIR}/resource")
+set(ROOT_DIR           "${CMAKE_SOURCE_DIR}")
+set(SRC_PATH           "${ROOT_DIR}/src")
+set(INCLUDE_PATH       "${ROOT_DIR}/include")
+set(REGENX_INCLUDE     "${INCLUDE_PATH}/RegenX")
+set(IMGUI_PATH         "${ROOT_DIR}/thirdparty/imgui")
+set(IMGUI_BACKENDS     "${IMGUI_PATH}/backends")
+set(IMNODEFLOW_PATH    "${ROOT_DIR}/thirdparty/ImNodeFlow")
+set(GLAD_PATH          "${ROOT_DIR}/thirdparty/glad")
+set(GLAD_INCLUDE       "${GLAD_PATH}/include")
+set(GLAD_SRC           "${GLAD_PATH}/src/glad.c")
+set(RESOURCE_DIR       "${ROOT_DIR}/resource")
+set(RESOURCE_DEST      "${CMAKE_BINARY_DIR}/resource")
 
 # ===========================================================
 # Source Files
 # ===========================================================
 set(MAIN_SOURCES
         "${SRC_PATH}/main.cpp"
-        "${SRC_PATH}/glad.c"
+        "${GLAD_SRC}"
 )
 
 set(REGENX_SOURCES
-        "${REGENX_PATH}/RegenXIO.cpp"
-        "${REGENX_PATH}/RegenXLog.cpp"
+        "${REGENX_INCLUDE}/RegenXIO.cpp"
+        "${REGENX_INCLUDE}/RegenXLog.cpp"
+        "${REGENX_INCLUDE}/RegenXMath.cpp"
 )
 
-set(INCLUDE_SOURCES
+set(RENDERING_SOURCES
         "${INCLUDE_PATH}/rendering/Shader.cpp"
         "${INCLUDE_PATH}/rendering/VAO.cpp"
         "${INCLUDE_PATH}/rendering/VBO.cpp"
         "${INCLUDE_PATH}/rendering/EBO.cpp"
 )
 
-set(IMGUI_CORE
+set(IMGUI_CORE_SOURCES
         "${IMGUI_PATH}/imgui.cpp"
         "${IMGUI_PATH}/imgui_draw.cpp"
         "${IMGUI_PATH}/imgui_widgets.cpp"
@@ -65,11 +78,10 @@ file(GLOB_RECURSE IMNODEFLOW_SOURCES
 set(ALL_SOURCES
         ${MAIN_SOURCES}
         ${REGENX_SOURCES}
-        ${INCLUDE_SOURCES}
+        ${RENDERING_SOURCES}
         ${IMNODEFLOW_SOURCES}
-        ${IMGUI_CORE}
+        ${IMGUI_CORE_SOURCES}
         ${IMGUI_BACKEND_SOURCES}
-        include/stb/stb_image.h
 )
 
 # ===========================================================
@@ -81,14 +93,16 @@ add_executable(${PROJECT_NAME} ${ALL_SOURCES})
 # Include Directories
 # ===========================================================
 target_include_directories(${PROJECT_NAME} PRIVATE
+        ${INCLUDE_PATH}
+        ${REGENX_INCLUDE}
         ${IMGUI_PATH}
         ${IMGUI_BACKENDS}
-        ${REGENX_PATH}
         ${IMNODEFLOW_PATH}/include
-        ${CURL_INCLUDE_DIRS}
+        ${GLAD_INCLUDE}
         ${SDL2_INCLUDE_DIRS}
-        ${ENET_INCLUDE_DIRS}
-        include
+        ${CURL_INCLUDE_DIRS}
+        ${ENET_INCLUDE_DIR}
+        ${GAINPUT_INCLUDE_DIR}
 )
 
 # ===========================================================
@@ -98,11 +112,12 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         SDL2::SDL2
         OpenGL::GL
         ${CURL_LIBRARIES}
-        ${ENET_LIBRARIES}
+        ${ENET_LIBRARY}
+        ${GAINPUT_LIBRARY}
 )
 
 # ===========================================================
-# Copy / regenerate resources folder
+# Resource Folder Copy
 # ===========================================================
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E remove_directory "${RESOURCE_DEST}"
@@ -112,10 +127,12 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 )
 
 # ===========================================================
-# IDE Source Grouping (optional)
+# IDE Source Grouping
 # ===========================================================
-source_group("ImGui Core"         FILES ${IMGUI_CORE})
-source_group("ImGui Backends"     FILES ${IMGUI_BACKEND_SOURCES})
-source_group("RegenX Modules"     FILES ${REGENX_SOURCES})
-source_group("ImNodeFlow Modules" FILES ${IMNODEFLOW_SOURCES})
-source_group("Main Source"        FILES ${MAIN_SOURCES})
+source_group("Main"        FILES ${MAIN_SOURCES})
+source_group("RegenX"      FILES ${REGENX_SOURCES})
+source_group("Rendering"   FILES ${RENDERING_SOURCES})
+source_group("ImGui Core"  FILES ${IMGUI_CORE_SOURCES})
+source_group("ImGui Backends" FILES ${IMGUI_BACKEND_SOURCES})
+source_group("ImNodeFlow"  FILES ${IMNODEFLOW_SOURCES})
+source_group("GLAD"        FILES ${GLAD_SRC})

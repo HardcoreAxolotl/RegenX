@@ -9,8 +9,8 @@
 #include "glad/glad.h"
 
 Shader::Shader(const char* vertex_file, const char* fragment_file) {
-    std::string vertexSource   = regenx::file::read(vertex_file);
-    std::string fragmentSource = regenx::file::read(fragment_file);
+    std::string vertexSource   = regenx::io::file_read(vertex_file);
+    std::string fragmentSource = regenx::io::file_read(fragment_file);
 
     const char* vertex_source   = vertexSource.c_str();
     const char* fragment_source = fragmentSource.c_str();

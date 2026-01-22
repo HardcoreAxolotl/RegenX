@@ -7,13 +7,13 @@
 #include <fstream>
 
 // LATER: Return here when RegenX has some more meat to its bone I feel like it can be improved
-namespace regenx::file {
-    bool exist(const std::string& path) {
+namespace regenx::io {
+    bool file_exist(const std::string& path) {
         return std::filesystem::exists(path);
     }
 
-    bool create(const std::string& path, const std::string& contents) {
-        if (!exist(path)) {
+    bool file_create(const std::string& path, const std::string& contents) {
+        if (!file_exist(path)) {
             std::ofstream file(path);
             if (!file.is_open()) {
                 return false;
@@ -25,8 +25,8 @@ namespace regenx::file {
         return false;
     }
 
-    bool write(const std::string& path, const std::string& contents) {
-        if (exist(path)) {
+    bool file_write(const std::string& path, const std::string& contents) {
+        if (file_exist(path)) {
             std::ofstream file(path, std::ios::app);
             if (!file.is_open()) {
                 return false;
@@ -38,7 +38,7 @@ namespace regenx::file {
         return false;
     }
 
-    std::string read(const std::string& path) {
+    std::string file_read(const std::string& path) {
         std::ifstream file(path);
         if (!file.is_open()) {
             return "";
@@ -52,7 +52,7 @@ namespace regenx::file {
         return content;
     }
 
-    std::string read_line(const std::string& path, const int line) {
+    std::string file_read_line(const std::string& path, const int line) {
         std::ifstream file(path);
         if (!file.is_open()) {
             return "";
@@ -69,8 +69,8 @@ namespace regenx::file {
         return content;
     }
 
-    bool remove(const std::string& path) {
-        if (exist(path)) {
+    bool file_remove(const std::string& path) {
+        if (file_exist(path)) {
             return std::filesystem::remove(path);
         }
         return false;
