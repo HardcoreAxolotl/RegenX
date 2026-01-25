@@ -1,7 +1,7 @@
 //
 // Created by liad on 1/12/26.
 //
-#include <RegenXIO.hpp>
+#include <RegenX/RegenXIO.hpp>
 
 #include <filesystem>
 #include <fstream>

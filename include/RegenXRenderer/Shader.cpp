@@ -4,9 +4,9 @@
 
 #include "Shader.hpp"
 
-#include "RegenXIO.hpp"
-#include "RegenXLog.hpp"
-#include "glad/glad.h"
+#include <RegenX/RegenXIO.hpp>
+#include <RegenX/RegenXLog.hpp>
+#include <glad/glad.h>
 
 Shader::Shader(const char* vertex_file, const char* fragment_file) {
     std::string vertexSource   = regenx::io::file_read(vertex_file);
@@ -36,11 +36,12 @@ Shader::Shader(const char* vertex_file, const char* fragment_file) {
     glDeleteShader(fragmentShader);
 }
 
-void Shader::activate() {
+void Shader::activate() const {
     glUseProgram(id);
 }
 
-void Shader::destroy() {
+void Shader::destroy() const
+{
     glDeleteProgram(id);
 }
 

@@ -4,7 +4,7 @@
 #pragma once
 
 #include <glad/glad.h>
-#include <rendering/VBO.h>
+#include <RegenXRenderer/VBO.hpp>
 
 class VAO {
     public:

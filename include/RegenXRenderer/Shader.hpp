@@ -10,7 +10,7 @@ public:
     GLuint id;
     Shader(const char* vertex_file, const char* fragment_file);
 
-    void activate();
+    void activate() const;
 
-    void destroy();
+    void destroy() const;
 };

@@ -29,15 +29,15 @@ pkg_check_modules(GLFW REQUIRED glfw3)
 set(ROOT_DIR        "${CMAKE_SOURCE_DIR}")
 set(SRC_PATH        "${ROOT_DIR}/src")
 set(INCLUDE_PATH    "${ROOT_DIR}/include")
-set(REGENX_INCLUDE  "${INCLUDE_PATH}/RegenX")
-set(IMGUI_PATH      "${ROOT_DIR}/thirdparty/imgui")
-set(IMGUI_BACKENDS  "${IMGUI_PATH}/backends")
-set(IMNODEFLOW_PATH "${ROOT_DIR}/thirdparty/ImNodeFlow")
-set(GLAD_PATH       "${ROOT_DIR}/thirdparty/glad")
-set(GLAD_INCLUDE    "${GLAD_PATH}/include")
-set(GLAD_SRC        "${GLAD_PATH}/src/glad.c")
+set(THIRDPARTY_PATH    "${ROOT_DIR}/thirdparty")
 set(RESOURCE_DIR    "${ROOT_DIR}/resource")
 set(RESOURCE_DEST   "${CMAKE_BINARY_DIR}/resource")
+
+set(IMGUI_PATH      "${THIRDPARTY_PATH}/imgui")
+set(IMGUI_BACKENDS  "${IMGUI_PATH}/backends")
+set(IMNODEFLOW_PATH "${THIRDPARTY_PATH}/ImNodeFlow")
+set(GLAD_INCLUDE    "${THIRDPARTY_PATH}/glad/include")
+set(GLAD_SRC        "${THIRDPARTY_PATH}/glad/src/glad.c")
 
 # ===========================================================
 # Source Files
@@ -48,16 +48,17 @@ set(MAIN_SOURCES
 )
 
 set(REGENX_SOURCES
-        "${REGENX_INCLUDE}/RegenXIO.cpp"
-        "${REGENX_INCLUDE}/RegenXLog.cpp"
-        "${REGENX_INCLUDE}/RegenXMath.cpp"
+        "${INCLUDE_PATH}/RegenX/RegenXIO.cpp"
+        "${INCLUDE_PATH}/RegenX/RegenXLog.cpp"
+        "${INCLUDE_PATH}/RegenX/RegenXMath.cpp"
 )
 
 set(RENDERING_SOURCES
-        "${INCLUDE_PATH}/rendering/Shader.cpp"
-        "${INCLUDE_PATH}/rendering/VAO.cpp"
-        "${INCLUDE_PATH}/rendering/VBO.cpp"
-        "${INCLUDE_PATH}/rendering/EBO.cpp"
+        "${INCLUDE_PATH}/RegenXRenderer/Shader.cpp"
+        "${INCLUDE_PATH}/RegenXRenderer/VAO.cpp"
+        "${INCLUDE_PATH}/RegenXRenderer/VBO.cpp"
+        "${INCLUDE_PATH}/RegenXRenderer/EBO.cpp"
+        "${INCLUDE_PATH}/RegenXRenderer/Texture.cpp"
 )
 
 set(IMGUI_CORE_SOURCES
@@ -83,7 +84,7 @@ set(ALL_SOURCES
         ${IMNODEFLOW_SOURCES}
         ${IMGUI_CORE_SOURCES}
         ${IMGUI_BACKEND_SOURCES}
-        thirdparty/stb/stb.cpp
+        ${THIRDPARTY_PATH}/stb/stb.cpp
 )
 
 # ===========================================================
@@ -97,6 +98,7 @@ add_executable(RegenXApp ${ALL_SOURCES})
 target_include_directories(RegenXApp PRIVATE
         ${INCLUDE_PATH}
         ${REGENX_INCLUDE}
+        ${THIRDPARTY_PATH}
         ${IMGUI_PATH}
         ${IMGUI_BACKENDS}
         ${IMNODEFLOW_PATH}/include

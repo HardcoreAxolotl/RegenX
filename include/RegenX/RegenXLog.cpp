@@ -1,7 +1,7 @@
 //
 // Created by liad on 1/12/26.
 //
-#include <RegenXLog.hpp>
+#include <RegenX/RegenXLog.hpp>
 
 #include <iostream>
 #include <chrono>

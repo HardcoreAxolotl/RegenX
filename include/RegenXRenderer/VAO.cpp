@@ -2,7 +2,7 @@
 // Created by liad on 1/14/26.
 //
 
-#include "VAO.h"
+#include "VAO.hpp"
 
 VAO::VAO() {
     glGenVertexArrays(1, &id);

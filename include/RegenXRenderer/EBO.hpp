@@ -7,7 +7,7 @@ public:
     GLuint id;
     EBO(GLuint *indices, GLsizeiptr size);
 
-    void bind();
+    void bind() const;
     void unbind();
-    void destroy();
+    void destroy() const;
 };
