@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace regenx::math
+namespace regenx::type
 {
 
 }

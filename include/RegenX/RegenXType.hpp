@@ -1,6 +1,6 @@
 #include <cmath>
 
-namespace regenx::math
+namespace regenx::type
 {
     template<typename T>
     struct vector2
