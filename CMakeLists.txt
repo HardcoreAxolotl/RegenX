@@ -16,10 +16,6 @@ find_package(CURL REQUIRED)
 find_library(ENET_LIBRARY enet)
 find_path(ENET_INCLUDE_DIR enet/enet.h)
 
-# Gainput (installed via cmake install)
-find_library(GAINPUT_LIBRARY NAMES gainput)
-find_path(GAINPUT_INCLUDE_DIR gainput/GainputInputManager.h)
-
 # GLFW (system-installed)
 pkg_check_modules(GLFW REQUIRED glfw3)
 
@@ -104,7 +100,6 @@ target_include_directories(RegenXApp PRIVATE
         ${IMNODEFLOW_PATH}/include
         ${GLAD_INCLUDE}
         ${ENET_INCLUDE_DIR}
-        ${GAINPUT_INCLUDE_DIR}
         ${CURL_INCLUDE_DIRS}
         ${GLFW_INCLUDE_DIRS}
 )
@@ -117,7 +112,6 @@ target_link_libraries(RegenXApp PRIVATE
         OpenGL::GL
         ${CURL_LIBRARIES}
         ${ENET_LIBRARY}
-        ${GAINPUT_LIBRARY}
         X11
 )
 
