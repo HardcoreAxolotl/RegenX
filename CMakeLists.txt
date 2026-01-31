@@ -50,7 +50,7 @@ set(MAIN_SOURCES
 set(REGENX_SOURCES
         "${INCLUDE_PATH}/RegenX/RegenXIO.cpp"
         "${INCLUDE_PATH}/RegenX/RegenXLog.cpp"
-        "${INCLUDE_PATH}/RegenX/RegenXMath.cpp"
+        "${INCLUDE_PATH}/RegenX/RegenXType.cpp"
 )
 
 set(RENDERING_SOURCES
