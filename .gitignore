@@ -16,3 +16,4 @@ compile_commands.json
 # OS junk
 .DS_Store
 *.log
+*.kdev4
