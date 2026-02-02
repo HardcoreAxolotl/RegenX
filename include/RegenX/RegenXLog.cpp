@@ -7,6 +7,7 @@
 #include <chrono>
 #include <format>
 #include "RegenXIO.hpp"
+#include "GLFW/glfw3.h"
 
 std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
 std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
@@ -64,6 +65,8 @@ namespace regenx::log {
             std::cerr << "\033[33m[WARNING] Failed to write FATAL log to file\033[0m\n";
         }
         std::cout << "\033[31m[FATAL] " << msg << "\033[0m\n";
+        glfwTerminate();
+        // TODO: is for debug and exist for release need to make a flag for it and make it act based on it
         std::abort();
     }
 

@@ -5,11 +5,13 @@
 #include <cmath>
 
 #include <RegenXRenderer/Shader.hpp>
+#include <RegenX/RegenXWindow.hpp>
 #include <RegenXRenderer/VAO.hpp>
 #include <RegenXRenderer/VBO.hpp>
 #include <RegenXRenderer/EBO.hpp>
 #include <stb/stb_image.h>
 
+#include "RegenX/RegenXWindow.hpp"
 #include "RegenXRenderer/Texture.hpp"
 
 
@@ -45,30 +47,11 @@ int main()
 	// So that means we only have the modern functions
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// Create a GLFWwindow object of 800 by 800 pixels, naming it "YoutubeOpenGL"
-	GLFWwindow* window = glfwCreateWindow(800, 800, "YoutubeOpenGL", NULL, NULL);
-	// Error check if the window fails to create
-	if (window == NULL)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-	// Introduce the window into the current context
-	glfwMakeContextCurrent(window);
-
-	//Load GLAD so it configures OpenGL
-	gladLoadGL();
-	// Specify the viewport of OpenGL in the Window
-	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
-	glViewport(0, 0, 800, 800);
-
-
+	// Create a Window object of 800 by 800 pixels, naming it "YoutubeOpenGL"
+	Window window(800, 800);
 
 	// Generates Shader object using shaders defualt.vert and default.frag
-	Shader shaderProgram("resource/shaders/default.vert", "resource/shaders/default.frag");
-
-
+	const Shader shaderProgram("resource/shaders/default.vert", "resource/shaders/default.frag");
 
 	// Generates Vertex Array Object and binds it
 	VAO VAO1;
@@ -99,7 +82,7 @@ int main()
 	glUniform1i(text0_uni, 0);
 
 	// Main while loop
-	while (!glfwWindowShouldClose(window))
+	while (!window.should_close())
 	{
 		// Specify the color of the background
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
@@ -115,12 +98,10 @@ int main()
 		// Draw primitives, number of indices, datatype of indices, index of indices
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		// Swap the back buffer with the front buffer
-		glfwSwapBuffers(window);
+		window.swap_buffers();
 		// Take care of all GLFW events
 		glfwPollEvents();
 	}
-
-
 
 	// Delete all the objects we've created
 	VAO1.destroy();
@@ -130,7 +111,7 @@ int main()
 
 	shaderProgram.destroy();
 	// Delete window before ending the program
-	glfwDestroyWindow(window);
+	window.destroy();
 	// Terminate GLFW before ending the program
 	glfwTerminate();
 	return 0;
