@@ -1,4 +1,4 @@
-#include "RegenXMath.hpp"
+#include "RegenXType.hpp"
 
 #include <cmath>
 

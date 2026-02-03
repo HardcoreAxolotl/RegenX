@@ -1,4 +1,5 @@
 #include "RegenXWindow.hpp"
+#include "RegenXLog.hpp"
 
 Window::Window(const int WINDOW_WIDTH, const int WINDOW_HEIGHT)
 {

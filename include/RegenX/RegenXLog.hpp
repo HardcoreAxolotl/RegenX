@@ -3,7 +3,6 @@
 #include <string>
 
 namespace regenx::log {
-
     /// Initialize logging. Optional, recommended if you want to save logs to a file.
     bool init();
 
@@ -38,5 +37,4 @@ namespace regenx::log {
     /// Log a system-level message. May not save to file if logging is not set up.
     /// @param msg The message to log.
     void system(const std::string& msg);
-
 }
