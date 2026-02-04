@@ -1,12 +1,11 @@
 //
 // Created by liad on 1/12/26.
 //
-#include "RegenXLog.hpp"
+#include <RegenX/Core/RegenXIO.hpp>
 
 #include <iostream>
 #include <chrono>
 #include <format>
-#include "RegenXIO.hpp"
 #include "GLFW/glfw3.h"
 
 std::chrono::system_clock::time_point now = std::chrono::system_clock::now();

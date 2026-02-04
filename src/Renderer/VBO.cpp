@@ -2,7 +2,7 @@
 // Created by liad on 1/14/26.
 //
 
-#include "VBO.hpp"
+#include <RegenX/Renderer/VBO.hpp>
 
 VBO::VBO(GLfloat *vertices, GLsizeiptr size) {
     glGenBuffers(1, &id);

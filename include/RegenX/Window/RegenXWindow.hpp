@@ -6,7 +6,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "RegenXLog.hpp"
+#include <RegenX/Core/RegenXLog.hpp>
 
 /**
  * @todo write docs
@@ -22,7 +22,7 @@ public:
     void destroy() const;
 
     // Get functions
-    bool should_close() const;
+    [[nodiscard]] bool should_close() const;
 
 private:
     GLFWwindow* window;

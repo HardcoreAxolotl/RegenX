@@ -1,13 +1,12 @@
 //
 // Created by liad on 1/12/26.
 //
-#include <RegenX/RegenXIO.hpp>
+#include <RegenX/Core/RegenXIO.hpp>
+#include <RegenX/Core/RegenXLog.hpp>
 
 #include <filesystem>
 #include <fstream>
 #include <vector>
-
-#include "RegenXLog.hpp"
 
 // LATER: Return here when RegenX has some more meat to its bone I feel like it can be improved
 namespace regenx::io {

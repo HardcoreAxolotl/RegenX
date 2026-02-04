@@ -1,118 +1,56 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include <iostream>
-#include <cmath>
+#include <ostream>
+#include <RegenX/RegenXLog.hpp>
+#include <RegenX/RegenXIO.hpp>
 
-#include <RegenXRenderer/Shader.hpp>
-#include <RegenX/RegenXWindow.hpp>
-#include <RegenXRenderer/VAO.hpp>
-#include <RegenXRenderer/VBO.hpp>
-#include <RegenXRenderer/EBO.hpp>
-#include <stb/stb_image.h>
-
-#include "RegenX/RegenXWindow.hpp"
-#include "RegenXRenderer/Texture.hpp"
-
-
-// Vertices coordinates
-GLfloat vertices[] =
-{
-	//  COORDINATES  //     // COLORS	   //		//
-	-0.5f, -0.5f, 0.0f,		1.0f, 0.0f, 0.0f,		0.0f, 1.0f,// Bottom left  → Red
-	 0.5f, -0.5f, 0.0f,		1.0f, 1.0f, 1.0f,		1.0f, 1.0f,// Bottom right → White
-	 0.5f,  0.5f, 0.0f,		0.0f, 0.0f, 1.0f,		1.0f, 0.0f,// Top right    → Blue
-	-0.5f,  0.5f, 0.0f,		0.0f, 1.0f, 0.0f, 		0.0f, 0.0f// Top left     → Green
-};
-
-// Indices for two triangles
-GLuint indices[] =
-{
-	0, 1, 2, // Bottom-left triangle
-	2, 3, 0  // Top-right triangle
-};
-
-
+using namespace regenx;
 
 int main()
 {
-	// Initialize GLFW
-	glfwInit();
+    // Initialize the logger
+    //log::init();
 
-	// Tell GLFW what version of OpenGL we are using
-	// In this case we are using OpenGL 3.3
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	// Tell GLFW we are using the CORE profile
-	// So that means we only have the modern functions
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    log::info("Creating file");
+    io::file_create("test.log");
+    std::cout << std::endl;
 
-	// Create a Window object of 800 by 800 pixels, naming it "YoutubeOpenGL"
-	Window window(800, 800);
+    log::info("Writing to file");
+    io::file_write("test.log", "Testing something 1");
+    std::cout << std::endl;
 
-	// Generates Shader object using shaders defualt.vert and default.frag
-	const Shader shaderProgram("resource/shaders/default.vert", "resource/shaders/default.frag");
+    log::info("Reading file");
+    std::string contents = io::file_read("test.log");
+    log::info("File contents: " + contents);
+    std::cout << std::endl;
 
-	// Generates Vertex Array Object and binds it
-	VAO VAO1;
-	VAO1.bind();
+    log::info("Overwriting file");
+    io::file_overwrite("test.log", "Testing something 2");
+    std::cout << std::endl;
 
-	// Generates Vertex Buffer Object and links it to vertices
-	VBO VBO1(vertices, sizeof(vertices));
-	// Generates Element Buffer Object and links it to indices
-	EBO EBO1(indices, sizeof(indices));
+    log::info("Appending a line to file");
+    io::file_write_line("test.log", 1, "Random Text");
+    std::cout << std::endl;
 
-	// Links VBO attributes such as coordinates and colors to VAO
-	VAO1.link_attributes(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
-	VAO1.link_attributes(VBO1, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	VAO1.link_attributes(VBO1, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	// Unbind all to prevent accidentally modifying them
-	VAO1.unbind();
-	VBO1.unbind();
-	EBO1.unbind();
+    log::info("Reading entire file again");
+    contents = io::file_read("test.log");
+    log::info("File contents: " + contents);
+    std::cout << std::endl;
 
-	// Gets ID of uniform called "scale"
-	GLuint uniID = glGetUniformLocation(shaderProgram.id, "scale");
+    log::info("Reading first line of file");
+    std::string first_line = io::file_read_line("test.log", 0);
+    log::info("First line: " + first_line);
+    std::cout << std::endl;
 
-	// Texture
-	Texture texture("resource/textures/khat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    log::info("Checking if file exists 1");
+    bool exists = io::file_exist("test.log");
+    log::info(std::string("File exists: ") + (exists ? "true" : "false"));
+    std::cout << std::endl;
 
-	GLuint text0_uni = glGetUniformLocation(shaderProgram.id, "tex0");
-	shaderProgram.activate();
-	glUniform1i(text0_uni, 0);
+    io::file_remove("test.log");
+    log::info("Checking if file exists 2");
+    exists = io::file_exist("test.log");
+    log::info(std::string("File exists: ") + (exists ? "true" : "false"));
 
-	// Main while loop
-	while (!window.should_close())
-	{
-		// Specify the color of the background
-		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-		// Clean the back buffer and assign the new color to it
-		glClear(GL_COLOR_BUFFER_BIT);
-		// Tell OpenGL which Shader Program we want to use
-		shaderProgram.activate();
-		// Assigns a value to the uniform; NOTE: Must always be done after activating the Shader Program
-		glUniform1f(uniID, 0.5f);
-		glBindTexture(GL_TEXTURE_2D, texture.id);
-		// Bind the VAO so OpenGL knows to use it
-		VAO1.bind();
-		// Draw primitives, number of indices, datatype of indices, index of indices
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		// Swap the back buffer with the front buffer
-		window.swap_buffers();
-		// Take care of all GLFW events
-		glfwPollEvents();
-	}
 
-	// Delete all the objects we've created
-	VAO1.destroy();
-	VBO1.destroy();
-	EBO1.destroy();
-	texture.destroy();
-
-	shaderProgram.destroy();
-	// Delete window before ending the program
-	window.destroy();
-	// Terminate GLFW before ending the program
-	glfwTerminate();
-	return 0;
+    return 0;
 }

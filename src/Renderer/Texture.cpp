@@ -1,7 +1,7 @@
 //
 // Created by liad on 23/01/2026.
 //
-#include <RegenXRenderer/Texture.hpp>
+#include <RegenX/Renderer/Texture.hpp>
 
 Texture::Texture(const char* image, const GLenum texture_type, const GLenum slot, const GLenum format, const GLenum pixel_type)
 {

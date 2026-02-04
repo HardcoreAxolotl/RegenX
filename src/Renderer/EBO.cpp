@@ -2,7 +2,7 @@
 // Created by liad on 1/14/26.
 //
 
-#include "EBO.hpp"
+#include <RegenX/Renderer/EBO.hpp>
 #include "glad/glad.h"
 
 EBO::EBO(GLuint *indices, GLsizeiptr size) {

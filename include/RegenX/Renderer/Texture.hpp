@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <stb/stb_image.h>
 
-#include <RegenXRenderer/Shader.hpp>
+#include "Shader.hpp"
 
 class Texture {
 public:

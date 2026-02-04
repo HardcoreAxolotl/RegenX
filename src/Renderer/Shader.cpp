@@ -2,10 +2,10 @@
 // Created by liad on 1/14/26.
 //
 
-#include "Shader.hpp"
+#include <RegenX/Renderer/Shader.hpp>
 
-#include <RegenX/RegenXIO.hpp>
-#include <RegenX/RegenXLog.hpp>
+#include <RegenX/Core/RegenXIO.hpp>
+#include <RegenX/Core/RegenXLog.hpp>
 #include <glad/glad.h>
 
 Shader::Shader(const char* vertex_file, const char* fragment_file) {

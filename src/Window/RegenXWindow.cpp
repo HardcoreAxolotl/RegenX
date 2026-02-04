@@ -1,5 +1,5 @@
-#include "RegenXWindow.hpp"
-#include "RegenXLog.hpp"
+#include <RegenX/Window/RegenXWindow.hpp>
+#include <RegenX/Core/RegenXLog.hpp>
 
 Window::Window(const int WINDOW_WIDTH, const int WINDOW_HEIGHT)
 {
@@ -8,7 +8,7 @@ Window::Window(const int WINDOW_WIDTH, const int WINDOW_HEIGHT)
     // Error check if the window fails to create
     if (window == NULL)
     {
-        regenx::log::log_fatal("Failed to create GLFW window", false);
+        regenx::log::fatal("Failed to create GLFW window");
         glfwTerminate();
     }
     // Introduce the window into the current context
@@ -17,7 +17,7 @@ Window::Window(const int WINDOW_WIDTH, const int WINDOW_HEIGHT)
     //Load GLAD so it configures OpenGL
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        regenx::log::log_fatal("Failed to initialize GLAD");
+        regenx::log::fatal("Failed to initialize GLAD");
     }
 
     // Specify the viewport of OpenGL in the Window

@@ -1,0 +1,8 @@
+//
+// Created by liad on 04/02/2026.
+//
+
+#ifndef REGENXAPP_REGENXMATH_HPP
+#define REGENXAPP_REGENXMATH_HPP
+
+#endif //REGENXAPP_REGENXMATH_HPP
