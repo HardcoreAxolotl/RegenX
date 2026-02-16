@@ -1,14 +1,14 @@
 //
 // Created by liad on 04/02/2026.
 //
+#pragma once
 
 #ifndef REGENXAPP_REGENXMATH_HPP
 #define REGENXAPP_REGENXMATH_HPP
+#include "RegenXType.hpp"  // vector2/3
 #include <cmath>
 #include <type_traits>
-#include "RegenXType.hpp"
-using regenx::type::vector2;
-using regenx::type::vector3;
+
 namespace regenx::math
 {
     template<typename T>
@@ -26,7 +26,7 @@ namespace regenx::math
             return result;
         }
 
-        static matrix3 translation(const vector2<T>& t)
+        static matrix3 translation(const type::vector2<T>& t)
         {
             matrix3 result = identity();
             result.m[0][2] = t.x;
@@ -46,7 +46,7 @@ namespace regenx::math
             return result;
         }
 
-        static matrix3 scaling(const vector2<T>& scale)
+        static matrix3 scaling(const type::vector2<T>& scale)
         {
             matrix3 result = identity();
             result.m[0][0] = scale.x;
@@ -83,18 +83,7 @@ namespace regenx::math
             }
             return result;
         }
-        vector3<T> operator*(const vector3<T>& v) const {
-            return vector3<T>{
-                m[0][0]*v.x + m[0][1]*v.y + m[0][2]*v.z,
-                m[1][0]*v.x + m[1][1]*v.y + m[1][2]*v.z,
-                m[2][0]*v.x + m[2][1]*v.y + m[2][2]*v.z
-            };
-        }
-        vector2<T> operator*(const vector2<T>& v) const {
-            vector3<T> hv{v.x, v.y, 1};
-            vector3<T> transformed = (*this) * hv;
-            return { transformed.x, transformed.y };
-        }
+
         matrix3& operator+=(const matrix3& other) {
             return *this = *this + other;
         }
@@ -104,18 +93,38 @@ namespace regenx::math
         matrix3& operator*=(const matrix3& other) {
             return *this = *this * other;
         }
+
+        T* operator[](std::size_t row) {
+            return m[row];
+        }
     };
 
     namespace vector
     {
         template<typename T>
-        T dot(const vector2<T>& a, const vector2<T>& b) {
+        T dot(const type::vector2<T>& a, const type::vector2<T>& b) {
             return a.x * b.x + a.y * b.y;
         }
 
         template<typename T>
-        T dot(const vector3<T>& a, const vector3<T>& b) {
+        T dot(const type::vector3<T>& a, const type::vector3<T>& b) {
             return a.x * b.x + a.y * b.y + a.z * b.z;
+        }
+
+        template<typename T>
+            type::vector3<T> transform(const type::vector3<T>& v, const matrix3<T>& m) {
+            return {
+                m.m[0][0]*v.x + m.m[0][1]*v.y + m.m[0][2]*v.z,
+                m.m[1][0]*v.x + m.m[1][1]*v.y + m.m[1][2]*v.z,
+                m.m[2][0]*v.x + m.m[2][1]*v.y + m.m[2][2]*v.z
+            };
+        }
+
+        template<typename T>
+        type::vector2<T> transform(const type::vector2<T>& v, const matrix3<T>& m) {
+            type::vector3<T> hv{v.x, v.y, 1};          // homogeneous vector
+            type::vector3<T> t = transform(hv, m);     // use vector3 version
+            return { t.x / t.z, t.y / t.z };                   // handle perspective if needed
         }
     }
 }

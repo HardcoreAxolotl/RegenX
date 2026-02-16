@@ -9,7 +9,7 @@
 #include <RegenX/Renderer/EBO.hpp>
 #include <RegenX/Renderer/Texture.hpp>
 
-class Rectangle
+class rectangle
 {
 	Shader shader_program;
 
@@ -34,7 +34,7 @@ class Rectangle
 	};
 
 	public:
-	Rectangle(const Shader &sp) : shader_program(sp), vbo(vertices, sizeof(vertices)), ebo(indices, sizeof(indices)),
+	rectangle(const Shader &sp) : shader_program(sp), vbo(vertices, sizeof(vertices)), ebo(indices, sizeof(indices)),
 	                              texture("resource/textures/khat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE)
 	{
 		// Generates Vertex Array Object and binds it
@@ -106,7 +106,7 @@ int main()
 	// Generates Shader object using shaders defualt.vert and default.frag
 	const Shader shader_program("resource/shaders/default.vert", "resource/shaders/default.frag");
 
-	Rectangle rect_1(shader_program);
+	rectangle rect_1(shader_program);
 
 	// Main while loop
 	while (!window.should_close())

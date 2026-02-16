@@ -3,8 +3,9 @@
 //
 
 #include <RegenX/Renderer/VBO.hpp>
+#include "RegenX/Core/RegenXType.hpp"
 
-VBO::VBO(GLfloat *vertices, GLsizeiptr size) {
+VBO::VBO(regenx::type::vertex *vertices, GLsizeiptr size) {
     glGenBuffers(1, &id);
     glBindBuffer(GL_ARRAY_BUFFER, id);
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_DYNAMIC_DRAW);

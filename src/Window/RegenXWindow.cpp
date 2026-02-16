@@ -41,3 +41,8 @@ bool Window::should_close() const
 {
     return glfwWindowShouldClose(window);
 }
+
+GLFWwindow* Window::get() const
+{
+    return window;
+}

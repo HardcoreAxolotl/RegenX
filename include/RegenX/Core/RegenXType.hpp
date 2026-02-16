@@ -1,12 +1,15 @@
 #pragma once
 #ifndef REGENXAPP_REGENXTYPE_HPP
 #define REGENXAPP_REGENXTYPE_HPP
-#include "RegenXMath.hpp"
-using regenx::math::matrix3;
+
+namespace regenx::math {
+    template<typename T> struct matrix3; // forward declare matrix3
+}
+
 namespace regenx::type
 {
     template<typename T>
-struct vector3
+    struct vector3
     {
         T x{};
         T y{};
@@ -33,13 +36,6 @@ struct vector3
         }
         vector3& operator*=(T scalar) {
             return *this = *this * scalar;
-        }
-        vector3<T>& operator*=(const matrix3<T>& m) {
-            vector3<T> t = m * (*this);  // use matrix3 × vector3 multiplication
-            x = t.x;
-            y = t.y;
-            z = t.z;
-            return *this;
         }
         vector3& operator/=(T scalar) {
             return *this = *this / scalar;
@@ -74,16 +70,15 @@ struct vector3
         vector2& operator*=(T scalar) {
             return *this = *this * scalar;
         }
-        vector2& operator*=(const matrix3<T>& m) {
-            vector3<T> hv{x, y, 1};
-            vector3<T> t = m * hv;
-            x = t.x;
-            y = t.y;
-            return *this;
-        }
         vector2& operator/=(T scalar) {
             return *this = *this / scalar;
         }
+    };
+
+    struct vertex {
+        regenx::type::vector3<float> position;
+        regenx::type::vector3<float> color;
+        regenx::type::vector2<float> uv;
     };
 }
 #endif //REGENXAPP_REGENXTYPE_HPP

@@ -24,6 +24,8 @@ public:
     // Get functions
     [[nodiscard]] bool should_close() const;
 
+    [[nodiscard]] GLFWwindow* get() const;
+
 private:
     GLFWwindow* window;
 };
