@@ -163,7 +163,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Create a Window object of 800 by 800 pixels, naming it "YoutubeOpenGL"
-	Window window(800, 800);
+	Window window(800, 800, "RegenX");
 
 	// Generates Shader object using shaders defualt.vert and default.frag
 	const Shader shader_program("resource/shaders/default.vert", "resource/shaders/default.frag");
